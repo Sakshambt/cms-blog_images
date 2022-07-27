@@ -4,11 +4,18 @@ import { PostCard, Categories, PostWidget } from '../components';
 import { getPosts } from '../services';
 import { Key, ReactNode } from 'react';
 
-interface Props{
-  posts?: ReactNode
+export async function getStaticProps() {
+  const posts = (await getPosts()) || [];
+  return {
+    props: { posts }
+  }
 }
 
-export default function Home({ posts, ...props }: Props) {
+interface Props{
+  posts?: [];
+}
+
+export default function Home({posts}:Props) {
   return (
     <div className="container mx-auto px-10 mb-8">
       <Head>
@@ -17,8 +24,8 @@ export default function Home({ posts, ...props }: Props) {
       </Head>
       <FeaturedPosts />
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-        <div className="lg:col-span-8 col-span-1" {...props}>
-          {posts.map((post: { title: Key | null | undefined; node: any; }) => (
+        <div className="lg:col-span-8 col-span-1" >
+          {posts!.map((post: { title: Key | null | undefined; node: any; }) => (
             <PostCard key={post.title} post={post.node} />
           ))}
         </div>
@@ -34,9 +41,3 @@ export default function Home({ posts, ...props }: Props) {
 }
 
 // Fetch data at build time
-export async function getStaticProps() {
-  const posts = (await getPosts()) || [];
-  return {
-    props: { posts },
-  };
-}
